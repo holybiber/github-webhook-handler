@@ -52,7 +52,8 @@ try {
     if ($_SERVER['CONTENT_TYPE'] == 'application/json')
         $json = file_get_contents('php://input');
     elseif ($_SERVER['CONTENT_TYPE'] == 'application/x-www-form-urlencoded')
-        $json = $_POST['payload'];
+        // $json = $_POST['payload'];   // not sure why but hashes don't match with this method
+        throw new Exception("Content type 'application/x-www-form-urlencoded' not supported, please use 'application/json'.");
     $payload = json_decode($json);
 
     if (empty($payload)) {
@@ -81,7 +82,8 @@ try {
 
 } catch (Exception $e) {
     echo $e->getMessage();
-    if (!empty($config) && isset($config['to'])) {
+    if (!empty($config) && isset($config['email']) && isset($config['email']['to']))
         mail($config['email']['to'], $e->getMessage(), (string) $e);
-    }
+    else
+        echo "ERROR: Couldn't find configuration for email address. No email sent.";
 }
