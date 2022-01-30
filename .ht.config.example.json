@@ -1,0 +1,22 @@
+{
+    "email": {
+        "from": "github-hook@example.com",
+        "to": "admin@example.com",
+    },
+    "endpoints": [
+        {
+            "repo": "user/repository",
+            "branch": "main",
+            "description": "Deployed to production system",
+            "run": "/path/to/deploy_scripts/main_script.sh",
+            "secret": "S0Me_l0NG-S3cr3t_r4Nd0m_STr1nG"
+        },
+        {
+            "repo": "user/repository",
+            "branch": "test",
+            "action": "Deployed to test system",
+            "run": "/path/to/deploy_scripts/test_script.sh",
+            "secret": "S0Me_0Th3R-l0NG-S3cr3t_r4Nd0m_STr1nG"
+        }
+    ]
+}
