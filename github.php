@@ -12,6 +12,7 @@ $configFilename = '.ht.config.json';
 function run($config, $repoConfig, $payload) {
     // execute the specified script and record its output
     ob_start();
+    $returnCode = -1;
     passthru($repoConfig['run'], $returnCode);
     $output = ob_get_contents();
     ob_end_flush();
@@ -36,9 +37,8 @@ function run($config, $repoConfig, $payload) {
                 .'</b> &nbsp; <a href="' . $commit->url
                 . '">read more</a></small></li>';
         }
-        $body .= "</ul><p>GitHub webhook handler invoked action: {$repoConfig['description']}.</p>";
+        $body .= "</ul><p>GitHub webhook handler invoked action: <b>{$repoConfig['description']}.</b></p>";
         $body .= "<p>Output of the script:</p><pre>$output</pre>";
-        $body .= "<p>Return code: $returnCode</p>";
         mail($config['email']['to'], $repoConfig['description'] . ($returnCode == 0)? " OK" : " ERROR", $body, $headers);
     }
 }
@@ -71,7 +71,7 @@ try {
         if (empty($repoConfig))
             throw new Exception("No configuration found for {$payload->repository->url} on branch $branch");
         if (!empty($repoConfig['secret'])) {
-            $hash = 'sha1=' . hash_hmac('sha1', $payload, $repoConfig['secret']);
+            $hash = 'sha1=' . hash_hmac('sha1', $json, $repoConfig['secret']);
             $headerHash = $_SERVER['HTTP_X_HUB_SIGNATURE'];
             if (!hash_equals($hash, $headerHash))
                 throw new Exception("The recieved hash ($headerHash) doesn't match the computed one ($hash).");
