@@ -82,6 +82,6 @@ try {
 } catch (Exception $e) {
     echo $e->getMessage();
     if (!empty($config) && isset($config['to'])) {
-        mail($config['to'], $e->getMessage(), (string) $e);
+        mail($config['email']['to'], $e->getMessage(), (string) $e);
     }
 }
