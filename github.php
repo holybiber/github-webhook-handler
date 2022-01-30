@@ -44,10 +44,9 @@ function run($config, $repoConfig, $payload) {
 }
 
 try {
-    if (!file_exists($configFilename)) {
+    if (!file_exists($configFilename))
         throw new Exception("Can't find $configFilename");
-    }
-    $config = json_decode(file_get_contents($configFilename));
+    $config = json_decode(file_get_contents($configFilename), true);
 
     $json = null;
     if ($_SERVER['CONTENT_TYPE'] == 'application/json')
@@ -62,9 +61,9 @@ try {
         $repoConfig = null;
         $branch = substr($payload->ref, 11);    // $payload->ref contains e.g. "refs/heads/main"
         foreach ($config['endpoints'] as $endpoint) {
-            // check if the push came from the right repository and branch
+            // check if we have a configuration for this repository and branch
             if ($payload->repository->url == 'https://github.com/' . $endpoint['repo']
-                && $payload->ref == $endpoint['branch']) {
+                && $branch == $endpoint['branch']) {
                     $repoConfig = $endpoint;
                     break;
             }
