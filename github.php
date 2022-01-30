@@ -50,16 +50,10 @@ try {
     $config = json_decode(file_get_contents($configFilename));
 
     $json = null;
-    switch ($_SERVER['CONTENT_TYPE']) {
-        case 'application/json':
-            $json = file_get_contents('php://input');
-            break;
-        case 'application/x-www-form-urlencoded':
-            $json = $_POST['payload'];
-            break;
-        default:
-            throw new Exception("Unsupported content type: {$_SERVER['CONTENT_TYPE']}");
-    }
+    if ($_SERVER['CONTENT_TYPE'] == 'application/json')
+        $json = file_get_contents('php://input');
+    elseif ($_SERVER['CONTENT_TYPE'] == 'application/x-www-form-urlencoded')
+        $json = $_POST['payload'];
     $payload = json_decode($json);
 
     if (empty($payload)) {
