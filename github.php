@@ -16,9 +16,9 @@ function run($config, $repoConfig, $payload) {
     $output = ob_get_contents();
     ob_end_flush();
 
-    if (isset($config->email)) {
+    if (isset($config['email'])) {
         // send notification mail and CC the github user who pushed the commit
-        $headers  = "From: {$config->email->from}\r\n";
+        $headers  = "From: {$config['email']['from']}\r\n";
         $headers .= "CC: {$payload->pusher->email}\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
         $headers .= "Content-Type: text/html; charset=utf-8\r\n";
@@ -39,7 +39,7 @@ function run($config, $repoConfig, $payload) {
         $body .= "</ul><p>GitHub webhook handler invoked action: {$repoConfig->action}. Output of the script:</p><pre>";
         $body .= $output . '</pre>';
 
-        mail($config->email->to, $repoConfig->action . ($returnCode == 0)? " OK" : " ERROR", $body, $headers);
+        mail($config['email']['to'], $repoConfig->action . ($returnCode == 0)? " OK" : " ERROR", $body, $headers);
     }
 }
 
@@ -81,7 +81,7 @@ try {
 
 } catch (Exception $e) {
     echo $e->getMessage();
-    if (!empty($config) && !empty($config->to)) {
-        mail($config->to, $e->getMessage(), (string) $e);
+    if (!empty($config) && isset($config['to'])) {
+        mail($config['to'], $e->getMessage(), (string) $e);
     }
 }
