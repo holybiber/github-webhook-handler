@@ -1,0 +1,2 @@
+# Prevent the real configuration from being pushed into the repository
+.ht.config.json
