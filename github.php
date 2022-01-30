@@ -36,10 +36,11 @@ function run($config, $repoConfig, $payload) {
                 .'</b> &nbsp; <a href="' . $commit->url
                 . '">read more</a></small></li>';
         }
-        $body .= "</ul><p>GitHub webhook handler invoked action: {$repoConfig->action}. Output of the script:</p><pre>";
-        $body .= $output . '</pre>';
+        $body .= "</ul><p>GitHub webhook handler invoked action: {$repoConfig->description}.</p>";
+        $body .= "<p>Output of the script:</p><pre>$output</pre>";
+        $body .= "<p>Return code: $returnCode</p>";
 
-        mail($config['email']['to'], $repoConfig->action . ($returnCode == 0)? " OK" : " ERROR", $body, $headers);
+        mail($config['email']['to'], $repoConfig->description . ($returnCode == 0)? " OK" : " ERROR", $body, $headers);
     }
 }
 
