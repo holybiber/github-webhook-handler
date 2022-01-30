@@ -7,7 +7,7 @@
  * All emails will be sent to the address specified in email->to in .ht.config.json
  * Errors will also be sent to that email address
  */
-$configFilename = '.ht.config.json';
+$configFilename = '.ht.config.json';    // Some security: files starting with .ht are usually never served by apache
 
 function run($config, $repoConfig, $payload) {
     // execute the specified script and record its output
@@ -39,7 +39,7 @@ function run($config, $repoConfig, $payload) {
         }
         $body .= "</ul><p>GitHub webhook handler invoked action: <b>{$repoConfig['description']}.</b></p>";
         $body .= "<p>Output of the script:</p><pre>$output</pre>";
-        mail($config['email']['to'], $repoConfig['description'] . ($returnCode == 0)? " OK" : " ERROR", $body, $headers);
+        mail($config['email']['to'], $repoConfig['description'] . (($returnCode == 0)? " OK" : " ERROR"), $body, $headers);
     }
 }
 

@@ -5,7 +5,7 @@ cd $repo
 
 # git branch --show-current is more readable but only available since git 2.22.0
 if [[ $(git symbolic-ref --short HEAD) != $branch ]]; then
-    echo "WARNING: Not deploying to $repo - we're not on branch main as expected."
+    echo "WARNING: Not deploying to $repo - we're not on branch $branch as expected."
     exit 1
 fi
 
