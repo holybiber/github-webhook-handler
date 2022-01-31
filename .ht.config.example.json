@@ -1,7 +1,7 @@
 {
     "email": {
         "from": "github-hook@example.com",
-        "to": "admin@example.com",
+        "to": "admin@example.com"
     },
     "endpoints": [
         {
