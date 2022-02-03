@@ -17,7 +17,7 @@ function run($config, $repoConfig, $payload) {
     if (isset($config['email'])) {
         // send notification mail
         $headers  = "From: {$config['email']['from']}\r\n";
-        if ($repoConfig['cc-pusher'])
+        if (!empty($repoConfig['cc-pusher']))
             // CC the github user who pushed the changes
             $headers .= "CC: {$payload->pusher->email}\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
@@ -46,6 +46,8 @@ try {
     if (!file_exists($configFilename))
         throw new Exception("Can't find $configFilename");
     $config = json_decode(file_get_contents($configFilename), true);
+    if (empty($config))
+        throw new Exception("Error while reading configuration.");
 
     $json = null;
     if (isset($_SERVER['CONTENT_TYPE'])) {
