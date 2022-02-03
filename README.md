@@ -34,13 +34,16 @@ exactly what you need.
    It will be used as subject in notification emails. This is especially
    helpful if you have multiple endpoints.
 
-   The email will contain all the messages of the pushed commits and the output of your update script.
+   The email will contain all the messages of the pushed commits and the output of your deployment script.
+
+   If you want the person who pushed the changes to receive the deployment notification as well,
+   set **endpoint.cc-pusher** to *"true"*. This involves only people with write permissions to your repository,
+   but still think about it as the script output may possibly contain sensitive details.
+
 
 4. On the settings page of your GitHub repository, go to **Webhooks** and
    enter the public url of your ``github.php``. Set the content type to "application/json" and enter
    the same secret you stored in the config in **endpoint.secret**.
 
 ## Credits
-It is based on https://gist.github.com/gka/4627519.
-Here the script isn't checking anymore whether the sending IP address belongs to GitHub
-but instead we're using a secret [as recommended](https://docs.github.com/en/developers/webhooks-and-events/webhooks/securing-your-webhooks). Besides, code quality was improved in many places.
+It is based on https://gist.github.com/gka/4627519. One important change is that we're not checking anymore whether the sending IP address belongs to GitHub but instead we're using a secret [as recommended](https://docs.github.com/en/developers/webhooks-and-events/webhooks/securing-your-webhooks). Besides, code quality was improved in many places.

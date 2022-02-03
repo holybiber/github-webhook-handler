@@ -10,27 +10,26 @@
 $configFilename = '.ht.config.json';    // Some security: files starting with .ht are usually never served by apache
 
 function run($config, $repoConfig, $payload) {
-    // execute the specified script and record its output
-    ob_start();
     $returnCode = -1;
-    passthru($repoConfig['run'], $returnCode);
-    $output = ob_get_contents();
-    ob_end_flush();
+    $output = null;
+    exec($repoConfig['run'], $output, $returnCode);
 
     if (isset($config['email'])) {
-        // send notification mail and CC the github user who pushed the commit
+        // send notification mail
         $headers  = "From: {$config['email']['from']}\r\n";
-        $headers .= "CC: {$payload->pusher->email}\r\n";
+        if ($repoConfig['cc-pusher'])
+            // CC the github user who pushed the changes
+            $headers .= "CC: {$payload->pusher->email}\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
         $headers .= "Content-Type: text/html; charset=utf-8\r\n";
 
-        $body = '<p>The Github user <a href="https://github.com/'
+        $body = '<p>The GitHub user <a href="https://github.com/'
             . $payload->pusher->name .'">@' . $payload->pusher->name . '</a>'
             . ' has pushed to <a href="' . $payload->repository->url . '">'
             . $payload->repository->url . '</a>:</p><ul>';
 
         foreach ($payload->commits as $commit) {
-            $body .= '<li>' . $commit->message . '<br />';
+            $body .= '<li><pre>' . $commit->message . '</pre>';
             $body .= '<small>added: <b>' . count($commit->added)
                 .'</b> &nbsp; modified: <b>' . count($commit->modified)
                 .'</b> &nbsp; removed: <b>' . count($commit->removed)
@@ -38,7 +37,7 @@ function run($config, $repoConfig, $payload) {
                 . '">read more</a></small></li>';
         }
         $body .= "</ul><p>GitHub webhook handler invoked action: <b>{$repoConfig['description']}.</b></p>";
-        $body .= "<p>Output of the script:</p><pre>$output</pre>";
+        $body .= "<p>Output of the script:</p><pre>" . implode("\n", $output) . "</pre>";
         mail($config['email']['to'], $repoConfig['description'] . (($returnCode == 0)? " OK" : " ERROR"), $body, $headers);
     }
 }
@@ -49,11 +48,13 @@ try {
     $config = json_decode(file_get_contents($configFilename), true);
 
     $json = null;
-    if ($_SERVER['CONTENT_TYPE'] == 'application/json')
-        $json = file_get_contents('php://input');
-    elseif ($_SERVER['CONTENT_TYPE'] == 'application/x-www-form-urlencoded')
-        // $json = $_POST['payload'];   // not sure why but hashes don't match with this method
-        throw new Exception("Content type 'application/x-www-form-urlencoded' not supported, please use 'application/json'.");
+    if (isset($_SERVER['CONTENT_TYPE'])) {
+        if ($_SERVER['CONTENT_TYPE'] == 'application/json')
+            $json = file_get_contents('php://input');
+        elseif ($_SERVER['CONTENT_TYPE'] == 'application/x-www-form-urlencoded')
+            // $json = $_POST['payload'];   // not sure why but hashes don't match with this method
+            throw new Exception("Content type 'application/x-www-form-urlencoded' not supported, please use 'application/json'.");
+    }
     $payload = json_decode($json);
 
     if (empty($payload)) {

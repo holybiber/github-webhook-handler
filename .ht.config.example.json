@@ -9,14 +9,16 @@
             "branch": "main",
             "description": "Deployed to production system",
             "run": "/path/to/deploy_scripts/main_script.sh",
-            "secret": "S0Me_l0NG-S3cr3t_r4Nd0m_STr1nG"
+            "secret": "S0Me_l0NG-S3cr3t_r4Nd0m_STr1nG",
+            "cc-pusher": false
         },
         {
             "repo": "user/repository",
             "branch": "test",
             "description": "Deployed to test system",
             "run": "/path/to/deploy_scripts/test_script.sh",
-            "secret": "S0Me_0Th3R-l0NG-S3cr3t_r4Nd0m_STr1nG"
+            "secret": "S0Me_0Th3R-l0NG-S3cr3t_r4Nd0m_STr1nG",
+            "cc-pusher": true
         }
     ]
 }
